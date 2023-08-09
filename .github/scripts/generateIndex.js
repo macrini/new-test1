@@ -3,7 +3,7 @@ const path = require('path');
 
 const generateDirectoryContent = (dirPath) => {
     const items = fs.readdirSync(dirPath).filter(item => item !== '.gitkeep');  // Exclude .gitkeep
-    let content = '<ul>';
+    let content = '<ul class="mt-4">';
 
     for (const item of items) {
         const itemPath = path.join(dirPath, item);
@@ -12,11 +12,11 @@ const generateDirectoryContent = (dirPath) => {
         if (isDirectory) {
             content += `
             <li>
-                <span class="collapsible">${item}</span>
-                <div class="content">${generateDirectoryContent(itemPath)}</div>
+                <span class="collapsible cursor-pointer text-blue-600 hover:text-blue-800">${item}</span>
+                <div class="content ml-4 mt-2">${generateDirectoryContent(itemPath)}</div>
             </li>`;
         } else {
-            content += `<li><a href="${path.relative('dist', itemPath)}">${item}</a></li>`;
+            content += `<li class="mt-1"><a href="${path.relative('dist', itemPath)}" class="text-gray-700 hover:text-gray-900">${item}</a></li>`;
         }
     }
 
@@ -28,30 +28,15 @@ const generateIndex = (dirPath = '.') => {
     const htmlTemplate = `
     <html>
         <head>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                }
-                ul {
-                    list-style-type: none;
-                }
-                a {
-                    text-decoration: none;
-                    color: #0366d6;
-                }
-                a:hover {
-                    text-decoration: underline;
-                }
-                .collapsible {
-                    cursor: pointer;
-                    color: #24292e;
-                }
-                .content {
-                    display: none;
-                }
-            </style>
+            <script type="module" src="https://cdn.skypack.dev/twind/shim"></script>
         </head>
-        <body>
+        <body class="bg-gray-100 p-10">
+
+            <h1 class="text-3xl font-semibold mb-6">Uniweb modules</h1>
+
+            <a href="./tutorial" class="inline-block px-6 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-full">View tutorial</a>
+            
+            <h2 class="text-2xl font-semibold mt-10 mb-4">Content hierarchy</h2>
             ${generateDirectoryContent(dirPath)}
 
             <script>
