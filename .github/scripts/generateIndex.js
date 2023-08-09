@@ -1,27 +1,55 @@
 const fs = require('fs');
 const path = require('path');
 
+const generateDirectoryContent = (dirPath) => {
+    const items = fs.readdirSync(dirPath);
+    let content = '<ul>';
+
+    for (const item of items) {
+        const itemPath = path.join(dirPath, item);
+        const isDirectory = fs.statSync(itemPath).isDirectory();
+
+        if (isDirectory) {
+            content += `<li><strong>${item}</strong>${generateDirectoryContent(itemPath)}</li>`;
+        } else {
+            content += `<li><a href="${path.relative('dist', itemPath)}">${item}</a></li>`;
+        }
+    }
+
+    content += '</ul>';
+    return content;
+};
+
 const generateIndex = (dirPath = '.') => {
-    const files = fs.readdirSync(dirPath);
-
-    let htmlContent = `<html>
-        <head><script type="module" src="https://cdn.skypack.dev/twind/shim"></script></head>
+    const htmlTemplate = `
+    <html>
+        <head>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                }
+                ul {
+                    list-style-type: none;
+                }
+                a {
+                    text-decoration: none;
+                    color: #0366d6;
+                }
+                a:hover {
+                    text-decoration: underline;
+                }
+                strong {
+                    color: #24292e;
+                }
+            </style>
+        </head>
         <body>
-            <main class="h-screen bg-purple-400 flex items-center justify-center">
-              <h1 class="font-bold text(center 5xl white sm:gray-800 md:pink-700)">Index</h1>
-            </main>
-            <a href="./tutorial"
-              class="px-6 py-3 text-blue-100 no-underline bg-blue-500 rounded hover:bg-blue-600 hover:underline hover:text-blue-200">
-              View tutorial
-            </a>`;
+            ${generateDirectoryContent(dirPath)}
+        </body>
+    </html>
+    `;
 
-    files.forEach(file => {
-        htmlContent += `<a href="${file}">${file}</a><br/>`;
-    });
-
-    htmlContent += '</body></html>';
-
-    fs.writeFileSync(path.join(dirPath, 'index.html'), htmlContent);
+    fs.writeFileSync(path.join(dirPath, 'index.html'), htmlTemplate);
 };
 
 generateIndex('dist');  // Assuming 'dist' is the target directory
