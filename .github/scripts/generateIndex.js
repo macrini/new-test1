@@ -19,7 +19,7 @@ const generateDirectoryContent = (dirPath) => {
             content += `
             <li>
                 <span class="collapsible cursor-pointer text-blue-600 hover:text-blue-800">${item}</span>
-                <div class="content ml-4 mt-2">${generateDirectoryContent(itemPath)}</div>
+                <div class="content ml-4 mt-2" style="display: none;">${generateDirectoryContent(itemPath)}</div>
             </li>`;
         } else {
             content += `<li class="mt-1"><a href="${path.relative('dist', itemPath)}" class="text-gray-700 hover:text-gray-900">${item}</a></li>`;
