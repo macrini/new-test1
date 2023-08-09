@@ -42,7 +42,7 @@ const generateIndex = (dirPath = '.', repoName = 'Unknown Repository') => {
 
             <a href="./tutorial" class="inline-block px-6 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-full">View tutorial</a>
             
-            <h2 class="text-2xl font-semibold mt-10 mb-4">Content hierarchy</h2>
+            <h2 class="text-2xl font-semibold mt-10 mb-4">Contents</h2>
             ${generateDirectoryContent(dirPath)}
 
             <script>
