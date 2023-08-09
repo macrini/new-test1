@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const generateDirectoryContent = (dirPath) => {
-    const items = fs.readdirSync(dirPath);
+    const items = fs.readdirSync(dirPath).filter(item => item !== '.gitkeep');  // Exclude .gitkeep
     let content = '<ul>';
 
     for (const item of items) {
@@ -10,7 +10,11 @@ const generateDirectoryContent = (dirPath) => {
         const isDirectory = fs.statSync(itemPath).isDirectory();
 
         if (isDirectory) {
-            content += `<li><strong>${item}</strong>${generateDirectoryContent(itemPath)}</li>`;
+            content += `
+            <li>
+                <span class="collapsible">${item}</span>
+                <div class="content">${generateDirectoryContent(itemPath)}</div>
+            </li>`;
         } else {
             content += `<li><a href="${path.relative('dist', itemPath)}">${item}</a></li>`;
         }
@@ -38,13 +42,26 @@ const generateIndex = (dirPath = '.') => {
                 a:hover {
                     text-decoration: underline;
                 }
-                strong {
+                .collapsible {
+                    cursor: pointer;
                     color: #24292e;
+                }
+                .content {
+                    display: none;
                 }
             </style>
         </head>
         <body>
             ${generateDirectoryContent(dirPath)}
+
+            <script>
+                const collapibles = document.querySelectorAll('.collapsible');
+                collapibles.forEach(collapsible => {
+                    collapsible.addEventListener('click', function() {
+                        this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none';
+                    });
+                });
+            </script>
         </body>
     </html>
     `;
