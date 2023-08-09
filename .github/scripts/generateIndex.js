@@ -2,7 +2,13 @@ const fs = require('fs');
 const path = require('path');
 
 const generateDirectoryContent = (dirPath) => {
-    const items = fs.readdirSync(dirPath).filter(item => item !== '.gitkeep');  // Exclude .gitkeep
+    let items = fs.readdirSync(dirPath).filter(item => item !== '.gitkeep');  // Exclude .gitkeep
+
+    // Sort by creation time (newest first)
+    items.sort((a, b) => {
+        return fs.statSync(path.join(dirPath, b)).birthtime - fs.statSync(path.join(dirPath, a)).birthtime;
+    });
+
     let content = '<ul class="mt-4">';
 
     for (const item of items) {
@@ -24,7 +30,7 @@ const generateDirectoryContent = (dirPath) => {
     return content;
 };
 
-const generateIndex = (dirPath = '.') => {
+const generateIndex = (dirPath = '.', repoName = 'Unknown Repository') => {
     const htmlTemplate = `
     <html>
         <head>
@@ -32,7 +38,7 @@ const generateIndex = (dirPath = '.') => {
         </head>
         <body class="bg-gray-100 p-10">
 
-            <h1 class="text-3xl font-semibold mb-6">Uniweb modules</h1>
+            <h1 class="text-3xl font-semibold mb-6">${repoName}</h1>
 
             <a href="./tutorial" class="inline-block px-6 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-full">View tutorial</a>
             
@@ -54,4 +60,6 @@ const generateIndex = (dirPath = '.') => {
     fs.writeFileSync(path.join(dirPath, 'index.html'), htmlTemplate);
 };
 
-generateIndex('dist');  // Assuming 'dist' is the target directory
+// Get the repo name from command line arguments
+const repoName = process.argv[2];
+generateIndex('dist', repoName);
